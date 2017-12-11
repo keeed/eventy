@@ -68,7 +68,8 @@ namespace eventy.Data
                 ((BaseEntity)entity.Entity).UserModified = currentUser.UserName;
             }
         }
-
+    
         public DbSet<Family> Families { get; set; }
+        public DbSet<Event> Events { get; set; }
     }
 }

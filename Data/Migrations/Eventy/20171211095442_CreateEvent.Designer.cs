@@ -11,9 +11,10 @@ using System;
 namespace eventy.Data.Migrations.Eventy
 {
     [DbContext(typeof(EventyDbContext))]
-    partial class EventyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171211095442_CreateEvent")]
+    partial class CreateEvent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +46,7 @@ namespace eventy.Data.Migrations.Eventy
 
             modelBuilder.Entity("eventy.Models.Family", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Address");

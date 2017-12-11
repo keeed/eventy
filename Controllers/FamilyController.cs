@@ -210,7 +210,7 @@ namespace eventy.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FamilyExists(int id)
+        private bool FamilyExists(long id)
         {
             return _context.Families.Any(e => e.Id == id);
         }
