@@ -32,13 +32,17 @@ namespace eventy.Data.Migrations.Eventy
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("OldControlNumber");
+
+                    b.Property<string>("OldFamilyNumber");
+
                     b.Property<string>("UserCreated");
 
                     b.Property<string>("UserModified");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Family");
+                    b.ToTable("Families");
                 });
 #pragma warning restore 612, 618
         }

@@ -39,8 +39,22 @@ namespace eventy.Data
         private void AddTimeStamps()
         {
             var entities = ChangeTracker.Entries().Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
+            ApplicationUser currentUser = null;
 
-            var currentUser = ApplicationDbContext.Users.Where( u => u.UserName == HttpContextAccessor.HttpContext.User.Identity.Name).First();
+            if (HttpContextAccessor.HttpContext != null)
+            {
+                currentUser = ApplicationDbContext.Users
+                    .Where( u => u.UserName == HttpContextAccessor.HttpContext.User.Identity.Name)
+                    .OrderBy(u => u.UserName)
+                    .First();
+            }
+            else
+            {
+                // We are doing a DB Seed.
+                currentUser = ApplicationDbContext.Users
+                    .OrderBy(u => u.Id)
+                    .First();
+            }
 
             foreach (var entity in entities)
             {

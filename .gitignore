@@ -5,7 +5,7 @@
 
 # Database Related
 *.db
-*_SEED.cs
+Seeds/
 
 # User-specific files
 *.suo

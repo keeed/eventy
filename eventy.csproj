@@ -34,7 +34,10 @@
     <None Update="app.db" >
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DevItems\app.db">
+    <None Update="Seeds/families.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Seeds/admin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="e_sqlite3.dll" Condition="'$(Configuration)' == 'Release'">

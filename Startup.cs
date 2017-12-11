@@ -96,16 +96,16 @@ namespace eventy
                 {
                     eventyDbContext.Database.Migrate();
                 }
+                SeedData.Initialize(scope.ServiceProvider.GetRequiredService<IServiceProvider>());
             }
         }
-
         private static void createSqliteDbFile()
         {
             // In case that the user is using sqlite.
             if (!File.Exists("app.db"))
             {
                 // Worst case, we don't have the app.db!
-                File.Create("app.db");
+                File.Create("app.db").Close();
             }
         }
 

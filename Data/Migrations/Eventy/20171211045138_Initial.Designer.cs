@@ -11,8 +11,8 @@ using System;
 namespace eventy.Data.Migrations.Eventy
 {
     [DbContext(typeof(EventyDbContext))]
-    [Migration("20171210184328_CreateFamilySchema")]
-    partial class CreateFamilySchema
+    [Migration("20171211045138_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,13 +33,17 @@ namespace eventy.Data.Migrations.Eventy
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("OldControlNumber");
+
+                    b.Property<string>("OldFamilyNumber");
+
                     b.Property<string>("UserCreated");
 
                     b.Property<string>("UserModified");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Family");
+                    b.ToTable("Families");
                 });
 #pragma warning restore 612, 618
         }
