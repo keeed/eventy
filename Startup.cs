@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using eventy.Data;
 using eventy.Models;
 using eventy.Services;
+using System.Linq;
+using System.IO;
 
 namespace eventy
 {
@@ -61,6 +63,38 @@ namespace eventy
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            initializeDabases(app);
+        }
+
+        private void initializeDabases(IApplicationBuilder app)
+        {
+            createSqliteDbFile();
+
+            // In-case that we need to do some migrations.
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                ApplicationDbContext applicationDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                if (applicationDbContext.Database.GetPendingMigrations().Any())
+                {
+                    applicationDbContext.Database.Migrate();
+                }
+                EventyDbContext eventyDbContext = scope.ServiceProvider.GetRequiredService<EventyDbContext>();
+                if (eventyDbContext.Database.GetPendingMigrations().Any())
+                {
+                    eventyDbContext.Database.Migrate();
+                }
+            }
+        }
+
+        private static void createSqliteDbFile()
+        {
+            // In case that the user is using sqlite.
+            if (!File.Exists("app.db"))
+            {
+                // Worst case, we don't have the app.db!
+                File.Create("app.db");
+            }
         }
     }
 }

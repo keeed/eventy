@@ -22,8 +22,10 @@ namespace eventy.Controllers
         }
 
         // GET: Family
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
+            // ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            // ViewData[""]
             return View(await _context.Family.ToListAsync());
         }
 
