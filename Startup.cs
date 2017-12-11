@@ -9,17 +9,23 @@ using eventy.Models;
 using eventy.Services;
 using System.Linq;
 using System.IO;
+using System;
+using System.Net.NetworkInformation;
+using System.Collections.Generic;
+using System.Net.Sockets;
 
 namespace eventy
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            HostingEnvironment = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -38,6 +44,12 @@ namespace eventy
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
+
+            // Extra for user friendliness
+            if (!HostingEnvironment.IsDevelopment())
+            {
+                printInstructions();
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -95,6 +107,49 @@ namespace eventy
                 // Worst case, we don't have the app.db!
                 File.Create("app.db");
             }
+        }
+
+        private void printInstructions()
+        {
+            Console.WriteLine("Please try the following urls below in your browser to access the site:");
+            printLocalIpAddress();
+            Console.WriteLine("");
+        }
+
+        private void printLocalIpAddress()
+        {
+            foreach(NetworkInterfaceType networkInterfaceType in Enum.GetValues(typeof(NetworkInterfaceType)))
+            {
+                printLocalIPAddressBasedOnType(networkInterfaceType);
+            }
+        }
+
+        private void printLocalIPAddressBasedOnType(NetworkInterfaceType networkInterfaceType)
+        {
+            foreach(var ipAddress in GetAllLocalIPv4(networkInterfaceType))
+            {
+                Console.WriteLine(ipAddress);
+            }
+        }
+
+        // https://stackoverflow.com/questions/6803073/get-local-ip-address
+        private string[] GetAllLocalIPv4(NetworkInterfaceType _type)
+        {
+            List<string> ipAddrList = new List<string>();
+            foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (item.NetworkInterfaceType == _type && item.OperationalStatus == OperationalStatus.Up)
+                {
+                    foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            ipAddrList.Add(ip.Address.ToString());
+                        }
+                    }
+                }
+            }
+            return ipAddrList.ToArray();
         }
     }
 }

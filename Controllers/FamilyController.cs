@@ -24,9 +24,22 @@ namespace eventy.Controllers
         // GET: Family
         public async Task<IActionResult> Index(string sortOrder)
         {
-            // ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            // ViewData[""]
-            return View(await _context.Family.ToListAsync());
+            ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+
+            var families = from f in _context.Families 
+                           select f;
+
+            switch(sortOrder)
+            {
+                case "name_desc": 
+                    families = families.OrderByDescending(f => f.Name);
+                    break;
+                default:
+                    families = families.OrderBy(f => f.Name);
+                    break;
+            }
+
+            return View(await _context.Families.AsNoTracking().ToListAsync());
         }
 
         // GET: Family/Details/5
@@ -37,7 +50,7 @@ namespace eventy.Controllers
                 return NotFound();
             }
 
-            var family = await _context.Family
+            var family = await _context.Families
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (family == null)
             {
@@ -77,7 +90,7 @@ namespace eventy.Controllers
                 return NotFound();
             }
 
-            var family = await _context.Family.SingleOrDefaultAsync(m => m.Id == id);
+            var family = await _context.Families.SingleOrDefaultAsync(m => m.Id == id);
             if (family == null)
             {
                 return NotFound();
@@ -128,7 +141,7 @@ namespace eventy.Controllers
                 return NotFound();
             }
 
-            var family = await _context.Family
+            var family = await _context.Families
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (family == null)
             {
@@ -143,15 +156,15 @@ namespace eventy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var family = await _context.Family.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Family.Remove(family);
+            var family = await _context.Families.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Families.Remove(family);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool FamilyExists(int id)
         {
-            return _context.Family.Any(e => e.Id == id);
+            return _context.Families.Any(e => e.Id == id);
         }
     }
 }

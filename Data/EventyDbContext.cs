@@ -55,6 +55,6 @@ namespace eventy.Data
             }
         }
 
-        public DbSet<eventy.Models.Family> Family { get; set; }
+        public DbSet<Family> Families { get; set; }
     }
 }
