@@ -13,6 +13,7 @@ using System;
 using System.Net.NetworkInformation;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using eventy.Repositories;
 
 namespace eventy
 {
@@ -42,6 +43,8 @@ namespace eventy
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            
+            services.AddTransient<FamiliesRepository>();
 
             services.AddMvc();
 

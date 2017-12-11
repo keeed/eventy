@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using eventy.Data;
 using eventy.Models;
+using eventy.Models.FamilyViewModels;
 
 namespace eventy.Controllers
 {
@@ -22,24 +23,65 @@ namespace eventy.Controllers
         }
 
         // GET: Family
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? page,
+            string searchStringOldId)
         {
+            ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["AddressSortParam"] = sortOrder == "Address" ? "date_desc" : "Address";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentFilterOldId"] = searchStringOldId;
 
             var families = from f in _context.Families 
                            select f;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                families = families.Where( f =>
+                    f.Name.ToUpper().Contains(searchString.ToUpper())
+                );
+            }
+            else if (!string.IsNullOrEmpty(searchStringOldId))
+            {
+                families = families.Where( f =>
+                    f.OldFamilyNumber.ToUpper().Contains(searchStringOldId.ToUpper())
+                );
+            }
 
             switch(sortOrder)
             {
                 case "name_desc": 
                     families = families.OrderByDescending(f => f.Name);
                     break;
+                case "Address":
+                    families = families.OrderBy(f => f.Address);
+                    break;
+                case "address_desc":
+                    families = families.OrderByDescending(f => f.Address);
+                    break;
                 default:
                     families = families.OrderBy(f => f.Name);
                     break;
             }
 
-            return View(await _context.Families.AsNoTracking().ToListAsync());
+            int pageSize = 15;
+
+            return View(await 
+                PaginatedList<Family>.CreateAsync(families.AsNoTracking(), page ?? 1, pageSize));
         }
 
         // GET: Family/Details/5
@@ -71,10 +113,15 @@ namespace eventy.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Address")] Family family)
+        public async Task<IActionResult> Create(CreateFamilyViewModel familyViewModel)
         {
+            var family = new Family();
+
             if (ModelState.IsValid)
             {
+                family.Name = familyViewModel.Name;
+                family.Address = familyViewModel.Address;
+
                 _context.Add(family);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -103,7 +150,7 @@ namespace eventy.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address,DateCreated,UserCreated,DateModified,UserModified")] Family family)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address")] Family family)
         {
             if (id != family.Id)
             {
@@ -114,6 +161,7 @@ namespace eventy.Controllers
             {
                 try
                 {
+                    family = _context.Families.Find(family.Id);
                     _context.Update(family);
                     await _context.SaveChangesAsync();
                 }

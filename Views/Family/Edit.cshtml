@@ -23,26 +23,23 @@
                 <input asp-for="Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DateCreated" class="control-label"></label>
-                <input asp-for="DateCreated" class="form-control" />
-                <span asp-validation-for="DateCreated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserCreated" class="control-label"></label>
-                <input asp-for="UserCreated" class="form-control" />
-                <span asp-validation-for="UserCreated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateModified" class="control-label"></label>
-                <input asp-for="DateModified" class="form-control" />
-                <span asp-validation-for="DateModified" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserModified" class="control-label"></label>
-                <input asp-for="UserModified" class="form-control" />
-                <span asp-validation-for="UserModified" class="text-danger"></span>
-            </div>
+
+            @if (!string.IsNullOrEmpty(Model.OldFamilyNumber))
+            {
+                <div class="form-group">
+                    <label asp-for="OldFamilyNumber" class="control-label"></label>
+                    <input asp-for="OldFamilyNumber" class="form-control disabled" readonly />
+                    <span asp-validation-for="OldFamilyNumber" class="text-danger"></span>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.OldFamilyNumber))
+            {
+                <div class="form-group">
+                    <label asp-for="OldControlNumber" class="control-label"></label>
+                    <input asp-for="OldControlNumber" class="form-control disabled" readonly />
+                    <span asp-validation-for="OldControlNumber" class="text-danger"></span>
+                </div>
+            }
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
