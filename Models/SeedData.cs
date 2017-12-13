@@ -20,6 +20,8 @@ namespace eventy.Models
             {
                 seedFamilies(context);
                 seedFamilyMembers(context);
+                seedEvents(context);
+                seedEventsFamilies(context);
             }
             Console.WriteLine("Done seeding!");
             Console.WriteLine();
@@ -58,14 +60,11 @@ namespace eventy.Models
 
         private static void seedFamilies(EventyDbContext eventyDbContext)
         {
-            if (!eventyDbContext.Families.Any())
+            if (eventyDbContext.Families.Any())
             {
-                seedFamily(eventyDbContext);
+                return;
             }
-        }
 
-        private static void seedFamily(EventyDbContext eventyDbContext)
-        {
             if (!File.Exists(@"Seeds/families.json"))
             {
                 return;
@@ -86,14 +85,11 @@ namespace eventy.Models
 
         private static void seedFamilyMembers(EventyDbContext eventyDbContext)
         {
-            if (!eventyDbContext.FamilyMembers.Any())
+            if (eventyDbContext.FamilyMembers.Any())
             {
-                seedFamilyMember(eventyDbContext);
+                return;
             }
-        }
 
-        private static void seedFamilyMember(EventyDbContext eventyDbContext)
-        {
             if (!File.Exists(@"Seeds/familymembers.json"))
             {
                 return;
@@ -108,6 +104,56 @@ namespace eventy.Models
                 );
 
                 eventyDbContext.FamilyMembers.AddRange(familyMembers);
+                eventyDbContext.SaveChanges();
+            }
+        }
+
+        private static void seedEvents(EventyDbContext eventyDbContext)
+        {
+            if (eventyDbContext.Events.Any())
+            {
+                return;
+            }
+
+            if (!File.Exists(@"Seeds/events.json"))
+            {
+                return;
+            }
+
+            if (!eventyDbContext.Events.Any())
+            {
+                Console.WriteLine("Seeding events...");
+
+                var events = JsonConvert.DeserializeObject<List<Event>>(
+                    File.ReadAllText(@"Seeds/events.json")
+                );
+
+                eventyDbContext.Events.AddRange(events);
+                eventyDbContext.SaveChanges();
+            }
+        }
+
+        private static void seedEventsFamilies(EventyDbContext eventyDbContext)
+        {
+            if (eventyDbContext.EventsFamilies.Any())
+            {
+                return;
+            }
+
+            if (!File.Exists(@"Seeds/eventsfamilies.json"))
+            {
+                return;
+            }
+
+            if (!eventyDbContext.EventsFamilies.Any())
+            {
+                Console.WriteLine("Seeding eventsfamilies...");
+
+                var eventsFamilies = JsonConvert.DeserializeObject<List<EventsFamilies>>(
+                    File.ReadAllText(@"Seeds/eventsfamilies.json")
+                );
+
+                eventyDbContext.EventsFamilies.AddRange(eventsFamilies);
                 eventyDbContext.SaveChanges();
             }
         }
