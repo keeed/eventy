@@ -22,9 +22,20 @@ namespace eventy.Controllers
         }
 
         // GET: FamilyMember
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.FamilyMembers.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var familyMembers = _context.FamilyMembers.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                familyMembers = familyMembers.Where(
+                    f => f.FullName.ToUpper().Contains(searchString.ToUpper())
+                );
+            }
+
+            return View(await familyMembers.ToListAsync());
         }
 
         // GET: FamilyMember/Details/5
