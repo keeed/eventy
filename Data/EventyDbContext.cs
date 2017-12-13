@@ -69,8 +69,10 @@ namespace eventy.Data
             }
         }
 
-        public DbSet<Family> Families { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<EventsFamilies> EventsFamilies { get; set; }
+        public DbSet<Family> Families { get; set; }
         public DbSet<FamilyMember> FamilyMembers { get; set; }
+        
     }
 }
