@@ -11,9 +11,10 @@ using System;
 namespace eventy.Data.Migrations.Eventy
 {
     [DbContext(typeof(EventyDbContext))]
-    partial class EventyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171213120208_UpdateFamilyMember")]
+    partial class UpdateFamilyMember
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using eventy.Data;
 using eventy.Models;
+using eventy.Models.FamilyMemberViewModels;
+using eventy.Models.GenericViewModels;
 
 namespace eventy.Controllers
 {
@@ -46,7 +48,18 @@ namespace eventy.Controllers
         // GET: FamilyMember/Create
         public IActionResult Create()
         {
-            return View();
+            var createFamilyMemberViewModel = new CreateFamilyMemberViewModel();
+
+            createFamilyMemberViewModel.Genders = new ListItemViewModel();
+            createFamilyMemberViewModel.Genders.Add("Male");
+            createFamilyMemberViewModel.Genders.Add("Female");
+
+            createFamilyMemberViewModel.HeadOfFamily = new ListItemViewModel();
+            createFamilyMemberViewModel.HeadOfFamily.Add("No");
+            createFamilyMemberViewModel.HeadOfFamily.Add("Yes");
+            createFamilyMemberViewModel.Birthday = DateTime.Now;
+
+            return View(createFamilyMemberViewModel);
         }
 
         // POST: FamilyMember/Create
@@ -54,15 +67,23 @@ namespace eventy.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FamilyId,FullName,Gender,Birthday,IsHeadOfFamily")] FamilyMember familyMember)
-        {
+        public async Task<IActionResult> Create(CreateFamilyMemberViewModel createFamilyMemberViewModel)
+        { 
+            FamilyMember familyMember = new FamilyMember();
             if (ModelState.IsValid)
             {
+                familyMember.FamilyId = createFamilyMemberViewModel.FamilyId;
+                familyMember.FullName = createFamilyMemberViewModel.FullName;
+                familyMember.Birthday = createFamilyMemberViewModel.Birthday;
+                familyMember.Gender = createFamilyMemberViewModel.SelectedGender;
+                familyMember.IsHeadOfFamily = 
+                    createFamilyMemberViewModel.IsHeadOfFamily == "Yes" ? true : false;
+
                 _context.Add(familyMember);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(familyMember);
+            return View(createFamilyMemberViewModel);
         }
 
         // GET: FamilyMember/Edit/5
@@ -78,7 +99,22 @@ namespace eventy.Controllers
             {
                 return NotFound();
             }
-            return View(familyMember);
+
+            var editFamilyMemberViewModel = new EditFamilyMemberViewModel();
+            editFamilyMemberViewModel.Id = familyMember.Id;
+            editFamilyMemberViewModel.FamilyId = familyMember.FamilyId;
+            editFamilyMemberViewModel.FullName = familyMember.FullName;
+            editFamilyMemberViewModel.Birthday = familyMember.Birthday;
+            editFamilyMemberViewModel.Genders = new ListItemViewModel();
+            editFamilyMemberViewModel.Genders.Add("Male");
+            editFamilyMemberViewModel.Genders.Add("Female");
+            editFamilyMemberViewModel.HeadOfFamily = new ListItemViewModel();
+            editFamilyMemberViewModel.HeadOfFamily.Add("No");
+            editFamilyMemberViewModel.HeadOfFamily.Add("Yes");
+            editFamilyMemberViewModel.SelectedGender = familyMember.Gender;
+            editFamilyMemberViewModel.IsHeadOfFamily = familyMember.IsHeadOfFamily ? "Yes" : "No";
+
+            return View(editFamilyMemberViewModel);
         }
 
         // POST: FamilyMember/Edit/5
@@ -86,17 +122,27 @@ namespace eventy.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FamilyId,FullName,Gender,Birthday,IsHeadOfFamily")] FamilyMember familyMember)
+        public async Task<IActionResult> Edit(int id, EditFamilyMemberViewModel editFamilyMemberViewModel)
         {
-            if (id != familyMember.Id)
+            if (id != editFamilyMemberViewModel.Id ||
+                !FamilyMemberExists(editFamilyMemberViewModel.Id))
             {
                 return NotFound();
             }
-
+            
             if (ModelState.IsValid)
             {
+                var familyMember = new FamilyMember();
                 try
                 {
+                    familyMember = _context.FamilyMembers.Find(editFamilyMemberViewModel.Id);
+                    familyMember.Id = editFamilyMemberViewModel.Id;
+                    familyMember.FamilyId = editFamilyMemberViewModel.Id;
+                    familyMember.FullName = editFamilyMemberViewModel.FullName;
+                    familyMember.Birthday = editFamilyMemberViewModel.Birthday;
+                    familyMember.Gender = editFamilyMemberViewModel.SelectedGender;
+                    familyMember.IsHeadOfFamily = editFamilyMemberViewModel.IsHeadOfFamily == "Yes" ? true : false;
+
                     _context.Update(familyMember);
                     await _context.SaveChangesAsync();
                 }
@@ -113,7 +159,7 @@ namespace eventy.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(familyMember);
+            return View(editFamilyMemberViewModel);
         }
 
         // GET: FamilyMember/Delete/5
@@ -137,7 +183,7 @@ namespace eventy.Controllers
         // POST: FamilyMember/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var familyMember = await _context.FamilyMembers.SingleOrDefaultAsync(m => m.Id == id);
             _context.FamilyMembers.Remove(familyMember);
@@ -145,7 +191,7 @@ namespace eventy.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FamilyMemberExists(int id)
+        private bool FamilyMemberExists(long id)
         {
             return _context.FamilyMembers.Any(e => e.Id == id);
         }

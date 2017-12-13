@@ -12,34 +12,85 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.FamilyId)
+            Id
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.FamilyId)
+            @Html.DisplayFor(model => model.Id)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.FullName)
+            Family Id
+        </dt>
+        <dd>
+            @if (Model.FamilyId == 0)
+        {
+            @:-
+    }
+    else
+    {
+        @Html.DisplayFor(model => model.FamilyId)
+}
+        </dd>
+        <dt>
+            Full Name
         </dt>
         <dd>
             @Html.DisplayFor(model => model.FullName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Gender)
+            Gender
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Gender)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Birthday)
+            Birthday
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Birthday)
+            @Model.Birthday.ToString("dd/MM/yyyy")
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.IsHeadOfFamily)
+            Is head of family
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.IsHeadOfFamily)
+            @if (Model.IsHeadOfFamily)
+        {
+            @:Yes
+    }
+    else
+    {
+        @:No
+}
+        </dd>
+        <hr />
+        <dt>
+            Last modified date
+        </dt>
+        <dd>
+            @{
+            DateTime dateModifiedLocal = Model.DateModified.Value.ToLocalTime();
+            }
+            @Html.DisplayFor(model => dateModifiedLocal)
+        </dd>
+        <dt>
+            Last modified by
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserModified)
+        </dd>
+        <dt>
+            Date Created
+        </dt>
+        <dd>
+            @{
+            DateTime dateCreated = Model.DateCreated.Value.ToLocalTime();
+            }
+            @Html.DisplayFor(model => dateCreated)
+        </dd>
+        <dt>
+            Created by
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserCreated)
         </dd>
     </dl>
     

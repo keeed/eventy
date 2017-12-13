@@ -3,16 +3,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace eventy.Models
 {
-    public class FamilyMember
+    public class FamilyMember : BaseEntity
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
         /// <summary>
         /// Family Id
         /// [Optional]
         /// </summary>
         /// <returns></returns>
-        public int FamilyId { get; set; }
+        public long FamilyId { get; set; }
         public string FullName { get; set; }
         public string Gender { get; set; }
         public DateTime Birthday { get; set; }

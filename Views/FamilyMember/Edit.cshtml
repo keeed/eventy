@@ -1,4 +1,4 @@
-@model eventy.Models.FamilyMember
+@model eventy.Models.FamilyMemberViewModels.EditFamilyMemberViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -14,31 +14,51 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="FamilyId" class="control-label"></label>
+                <label asp-for="FamilyId" class="control-label">Family Id</label>
                 <input asp-for="FamilyId" class="form-control" />
                 <span asp-validation-for="FamilyId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
+                <label asp-for="FullName" class="control-label">Full Name</label>
                 <input asp-for="FullName" class="form-control" />
                 <span asp-validation-for="FullName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
-                <span asp-validation-for="Gender" class="text-danger"></span>
+                <label for="SelectedGender">Gender</label>
+                <select class="form-control" asp-for="SelectedGender">
+                @foreach(var item in Model.Genders)
+                {
+                    @if (item.Value == Model.SelectedGender)
+                    {
+                        <option selected="selected">@item.Value</option>
+                    }
+                    else
+                    {
+                        <option>@item.Value</option>
+                    }
+                }
+                </select>
             </div>
             <div class="form-group">
-                <label asp-for="Birthday" class="control-label"></label>
+                <label asp-for="Birthday" class="control-label">Birthday</label>
                 <input asp-for="Birthday" class="form-control" />
                 <span asp-validation-for="Birthday" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <div class="checkbox">
-                    <label>
-                        <input asp-for="IsHeadOfFamily" /> @Html.DisplayNameFor(model => model.IsHeadOfFamily)
-                    </label>
-                </div>
+                <label for="IsHeadOfFamily">Is Head of Family</label>
+                <select class="form-control" asp-for="IsHeadOfFamily">
+                @foreach(var item in Model.HeadOfFamily)
+                {
+                    @if (item.Value == Model.IsHeadOfFamily)
+                    {
+                        <option selected="selected">@item.Value</option>
+                    }
+                    else
+                    {
+                        <option>@item.Value</option>
+                    }
+                }
+                </select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
