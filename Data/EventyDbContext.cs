@@ -44,7 +44,7 @@ namespace eventy.Data
             if (HttpContextAccessor.HttpContext != null)
             {
                 currentUser = ApplicationDbContext.Users
-                    .Where( u => u.UserName == HttpContextAccessor.HttpContext.User.Identity.Name)
+                    .Where(u => u.UserName == HttpContextAccessor.HttpContext.User.Identity.Name)
                     .OrderBy(u => u.UserName)
                     .First();
             }
@@ -68,8 +68,9 @@ namespace eventy.Data
                 ((BaseEntity)entity.Entity).UserModified = currentUser.UserName;
             }
         }
-    
+
         public DbSet<Family> Families { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<FamilyMember> FamilyMembers { get; set; }
     }
 }
