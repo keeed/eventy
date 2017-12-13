@@ -16,11 +16,14 @@ namespace eventy.Models
         {
             Console.WriteLine("Attempting to seed data...");
             seedAdmin(serviceProvider);
-            seedFamilies(serviceProvider);
+            using (var context = serviceProvider.GetRequiredService<EventyDbContext>())
+            {
+                seedFamilies(context);
+                seedFamilyMembers(context);
+            }
             Console.WriteLine("Done seeding!");
             Console.WriteLine();
         }
-
         private static void seedAdmin(IServiceProvider serviceProvider)
         {
             using (var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>())
@@ -53,14 +56,11 @@ namespace eventy.Models
             }
         }
 
-        private static void seedFamilies(IServiceProvider serviceProvider)
+        private static void seedFamilies(EventyDbContext eventyDbContext)
         {
-            using (var context = serviceProvider.GetRequiredService<EventyDbContext>())
+            if (!eventyDbContext.Families.Any())
             {
-                if (!context.Families.Any())
-                {
-                    seedFamily(context);
-                }
+                seedFamily(eventyDbContext);
             }
         }
 
@@ -71,19 +71,44 @@ namespace eventy.Models
                 return;
             }
 
-            using (var context = eventyDbContext)
+            if (!eventyDbContext.Families.Any())
             {
-                if (!context.Families.Any())
-                {
-                    Console.WriteLine("Seeding families...");
+                Console.WriteLine("Seeding families...");
 
-                    var families = JsonConvert.DeserializeObject<List<Family>>(
-                        File.ReadAllText(@"Seeds/families.json")
-                    );
+                var families = JsonConvert.DeserializeObject<List<Family>>(
+                    File.ReadAllText(@"Seeds/families.json")
+                );
 
-                    context.AddRange(families);
-                    context.SaveChanges();
-                }
+                eventyDbContext.Families.AddRange(families);
+                eventyDbContext.SaveChanges();
+            }
+        }
+
+        private static void seedFamilyMembers(EventyDbContext eventyDbContext)
+        {
+            if (!eventyDbContext.FamilyMembers.Any())
+            {
+                seedFamilyMember(eventyDbContext);
+            }
+        }
+
+        private static void seedFamilyMember(EventyDbContext eventyDbContext)
+        {
+            if (!File.Exists(@"Seeds/familymembers.json"))
+            {
+                return;
+            }
+
+            if (!eventyDbContext.FamilyMembers.Any())
+            {
+                Console.WriteLine("Seeding family members...");
+
+                var familyMembers = JsonConvert.DeserializeObject<List<FamilyMember>>(
+                    File.ReadAllText(@"Seeds/familymembers.json")
+                );
+
+                eventyDbContext.FamilyMembers.AddRange(familyMembers);
+                eventyDbContext.SaveChanges();
             }
         }
     }

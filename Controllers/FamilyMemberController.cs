@@ -22,9 +22,21 @@ namespace eventy.Controllers
         }
 
         // GET: FamilyMember
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(
+            string searchString,
+            string currentFilter,
+            int? page)
         {
             ViewData["CurrentFilter"] = searchString;
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
 
             var familyMembers = _context.FamilyMembers.AsQueryable();
 
@@ -35,7 +47,8 @@ namespace eventy.Controllers
                 );
             }
 
-            return View(await familyMembers.ToListAsync());
+            int pageSize = 15;
+            return View(await PaginatedList<FamilyMember>.CreateAsync(familyMembers.AsNoTracking(), page ?? 1, pageSize));
         }
 
         // GET: FamilyMember/Details/5
