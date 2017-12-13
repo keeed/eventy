@@ -1,0 +1,71 @@
+@model eventy.Models.Event
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Event</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Event Name
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EventName)
+        </dd>
+        <dt>
+            Event Date
+        </dt>
+        <dd>
+            @{
+                DateTime localEventDate = Model.EventDate.ToLocalTime();
+            }
+            @Html.DisplayFor(model => localEventDate)
+        </dd>
+        <dt>
+            Max number of Families
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MaxNumberOfFamilies)
+        </dd>
+        <hr />
+        <dt>
+            Last modified date
+        </dt>
+        <dd>
+            @{
+                DateTime dateModifiedLocal = Model.DateModified.Value.ToLocalTime();
+            }
+            @Html.DisplayFor(model => dateModifiedLocal)
+        </dd>
+        <dt>
+            Last modified by
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserModified)
+        </dd>
+        <dt>
+            Date Created
+        </dt>
+        <dd>
+            @{
+                DateTime dateCreated = Model.DateCreated.Value.ToLocalTime();
+            }
+            @Html.DisplayFor(model => dateCreated)
+        </dd>
+        <dt>
+            Created by
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserCreated)
+        </dd>
+    </dl>
+</div>
+<hr />
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
