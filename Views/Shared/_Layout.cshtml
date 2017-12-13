@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject SignInManager<ApplicationUser> SignInManager
+    
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -29,28 +31,39 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">eventy</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Family <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                        <li><a asp-area="" asp-controller="Family" asp-action="Create">Add Family</a></li>
-                        <li><a asp-area="" asp-controller="Family" asp-action="Index">View Families</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a asp-area="" asp-controller="Family" asp-action="Index">Search Family</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Events <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                        <li><a asp-area="" asp-controller="Event" asp-action="Create">Create Event</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a asp-area="" asp-controller="Event" asp-action="Index">Find Event</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a asp-area="" asp-controller="Report" asp-action="Index">Reports</a>
-                    </li>
-                </ul>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Family <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-controller="Family" asp-action="Create">Create Family</a></li>
+                            <li><a asp-area="" asp-controller="Family" asp-action="Index">View Families</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a asp-area="" asp-controller="Family" asp-action="Index">Search Family</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Family Members <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-controller="FamilyMember" asp-action="Create">Create Family Member</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a asp-area="" asp-controller="FamilyMember" asp-action="Index">Find Family Members</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Events <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-controller="Event" asp-action="Create">Create Event</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a asp-area="" asp-controller="Event" asp-action="Index">Find Event</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a asp-area="" asp-controller="Report" asp-action="Index">Reports</a>
+                        </li>
+                    </ul>
+                }
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
