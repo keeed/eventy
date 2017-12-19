@@ -15,5 +15,6 @@ namespace eventy.Models.EventViewModels
     {
         public Family Family { get; set; }
         public FamilyMember FamilyMember { get; set; }
+        public bool IsAttending { get; set; }
     }
 }

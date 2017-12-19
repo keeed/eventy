@@ -56,7 +56,7 @@ namespace eventy.Controllers
                 }
             ).Where(eventFamily => eventFamily.EventId == @event.Id);
 
-            var familyMembers = _context.FamilyMembers.Join(
+            var familyMembersDetails = _context.FamilyMembers.Join(
                 families,
                 familyMember => familyMember.FamilyId,
                 eventFamily => eventFamily.Family.Id,
@@ -66,7 +66,23 @@ namespace eventy.Controllers
                     FamilyMember = familyMember
                 });
 
-            eventDetailsViewModel.FamilyMembersDetails = await familyMembers.ToListAsync();
+            eventDetailsViewModel.FamilyMembersDetails = await familyMembersDetails.ToListAsync();
+
+            // Do this in memory instead of manually checking each item against EF.
+            var eventFamilyMembers = await _context.EventsFamilyMembers
+                .Where(efm => efm.EventId == @event.Id)
+                .ToListAsync();
+            
+            eventDetailsViewModel.FamilyMembersDetails.ForEach(fmd => {
+                if (eventFamilyMembers.Any(efm => efm.FamilyMemberId == fmd.FamilyMember.Id))
+                {
+                    fmd.IsAttending = true;
+                }
+                else
+                {
+                    fmd.IsAttending = false;
+                }
+            });
 
             return View(eventDetailsViewModel);
         }
