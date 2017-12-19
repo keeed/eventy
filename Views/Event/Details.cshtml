@@ -91,11 +91,11 @@
                     <td>
                         @if (!familyMemberDetail.IsAttending)
                         {
-                            <a class="btn btn-success" type="button" href="">Add Attendance</a>
+                            <button type="button" id="@Model.Event.Id---@familyMemberDetail.FamilyMember.Id" class="btn btn-success" type="button" onclick="addAttendance(@Model.Event.Id, @familyMemberDetail.FamilyMember.Id)">Add Attendance</button>
                         }
                         else
                         {
-                            <a class="btn btn-danger" type="button" href="">Remove Attendance</a>
+                            <button type="button" id="@Model.Event.Id---@familyMemberDetail.FamilyMember.Id" class="btn btn-danger" type="button" onclick="removeAttendance(@Model.Event.Id, @familyMemberDetail.FamilyMember.Id)">Remove Attendance</button>
                         }
                     </td>
                 </tr>
@@ -103,3 +103,5 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript" src="~/js/attendance.js"></script>

@@ -4,13 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using eventy.Data;
 using eventy.Models;
+using eventy.Models.Api.EventsFamilyMembersViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace eventy.Controllers.Api
 {
-    [Route("api/[controller]")]
+    [Authorize]
     public class EventsFamilyMembersController : Controller
     {
         public EventyDbContext Context { get; }
@@ -21,7 +23,33 @@ namespace eventy.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<JsonResult> AddAttendance(AddAttendanceViewModel addAttendanceViewModel)
+        [Route("api/events/removeAttendance")]
+        public async Task<JsonResult> RemoveAttendance([FromBody] RemoveAttendanceViewModel removeAttendanceViewModel)
+        {
+            bool isSuccessful = false;
+
+            if (Context.EventsFamilyMembers.Any(efm => efm.EventId == removeAttendanceViewModel.EventId &&
+                              efm.FamilyMemberId == removeAttendanceViewModel.FamilyMemberId))
+            {
+                var eventFamilyMember = Context.EventsFamilyMembers
+                    .Where(efm => efm.EventId == removeAttendanceViewModel.EventId &&
+                              efm.FamilyMemberId == removeAttendanceViewModel.FamilyMemberId).FirstOrDefault();
+
+                Context.EventsFamilyMembers.Remove(eventFamilyMember);
+                await Context.SaveChangesAsync();
+
+                isSuccessful = true;
+            }
+
+            return Json(new
+            {
+                success = isSuccessful
+            });
+        }
+
+        [HttpPost]
+        [Route("api/events/addAttendance")]
+        public async Task<JsonResult> AddAttendance([FromBody]AddAttendanceViewModel addAttendanceViewModel)
         {
             bool isSuccessful = false;
 
@@ -30,7 +58,7 @@ namespace eventy.Controllers.Api
 
             var isExisting =  Context.EventsFamilyMembers.Any(efm =>
                 efm.FamilyMemberId == addAttendanceViewModel.FamilyMemberId &&
-                efm.EventId == addAttendanceViewModel.FamilyMemberId);
+                efm.EventId == addAttendanceViewModel.EventId);
 
             if (!isExisting)
             {
@@ -40,6 +68,8 @@ namespace eventy.Controllers.Api
                         FamilyMemberId = addAttendanceViewModel.FamilyMemberId
                     }
                 );
+
+                await Context.SaveChangesAsync();
 
                 isSuccessful = true;
             }
