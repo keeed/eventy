@@ -1,4 +1,4 @@
-@model eventy.Models.Event
+@model eventy.Models.EventViewModels.EventDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -7,21 +7,25 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Event</h4>
+    <h4>@Html.DisplayFor(model => model.Event.EventName)</h4>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Event.Id">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
     <hr />
     <dl class="dl-horizontal">
         <dt>
             Event Name
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.EventName)
+            @Html.DisplayFor(model => model.Event.EventName)
         </dd>
         <dt>
             Event Date
         </dt>
         <dd>
             @{
-                DateTime localEventDate = Model.EventDate.ToLocalTime();
+                DateTime localEventDate = Model.Event.EventDate.ToLocalTime();
             }
             @Html.DisplayFor(model => localEventDate)
         </dd>
@@ -29,7 +33,7 @@
             Max number of Families
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.MaxNumberOfFamilies)
+            @Html.DisplayFor(model => model.Event.MaxNumberOfFamilies)
         </dd>
         <hr />
         <dt>
@@ -37,7 +41,7 @@
         </dt>
         <dd>
             @{
-                DateTime dateModifiedLocal = Model.DateModified.Value.ToLocalTime();
+                DateTime dateModifiedLocal = Model.Event.DateModified.Value.ToLocalTime();
             }
             @Html.DisplayFor(model => dateModifiedLocal)
         </dd>
@@ -45,14 +49,14 @@
             Last modified by
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.UserModified)
+            @Html.DisplayFor(model => model.Event.UserModified)
         </dd>
         <dt>
             Date Created
         </dt>
         <dd>
             @{
-                DateTime dateCreated = Model.DateCreated.Value.ToLocalTime();
+                DateTime dateCreated = Model.Event.DateCreated.Value.ToLocalTime();
             }
             @Html.DisplayFor(model => dateCreated)
         </dd>
@@ -60,12 +64,36 @@
             Created by
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.UserCreated)
+            @Html.DisplayFor(model => model.Event.UserCreated)
         </dd>
     </dl>
 </div>
 <hr />
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Family ID</th>
+                <th>Family Name</th>
+                <th>Family Member ID </th>
+                <th>Name </th>
+                <th>Actions </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var familyMemberDetail in Model.FamilyMembersDetails)
+            {
+                <tr>
+                    <td>@familyMemberDetail.Family.Id</td>
+                    <td>@familyMemberDetail.Family.Name</td>
+                    <td>@familyMemberDetail.FamilyMember.Id</td>
+                    <td>@familyMemberDetail.FamilyMember.FullName</td>
+                    <td>
+                        <a class="btn btn-success" type="button" href="">Add Attendance</a>
+                        <a class="btn btn-danger" type="button" href="">Remove Attendance</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

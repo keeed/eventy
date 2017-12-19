@@ -43,7 +43,32 @@ namespace eventy.Controllers
                 return NotFound();
             }
 
-            return View(@event);
+            var eventDetailsViewModel = new EventDetailsViewModel();
+            eventDetailsViewModel.Event = @event;
+
+            var families = _context.EventsFamilies.Join(
+                _context.Families,
+                eventFamily => eventFamily.Id,
+                family => family.Id,
+                (eventFamily, family) => new {
+                    Family = family,
+                    EventId = eventFamily.EventId
+                }
+            ).Where(eventFamily => eventFamily.EventId == @event.Id);
+
+            var familyMembers = _context.FamilyMembers.Join(
+                families,
+                familyMember => familyMember.FamilyId,
+                eventFamily => eventFamily.Family.Id,
+                (familyMember, eventFamily) => new FamilyMemberDetails()
+                {
+                    Family = eventFamily.Family,
+                    FamilyMember = familyMember
+                });
+
+            eventDetailsViewModel.FamilyMembersDetails = await familyMembers.ToListAsync();
+
+            return View(eventDetailsViewModel);
         }
 
         // GET: Event/Create
