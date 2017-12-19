@@ -59,8 +59,8 @@
                             <li><a asp-area="" asp-controller="Event" asp-action="Index">Find Event</a></li>
                             </ul>
                         </li>
-                        <li>
-                            <a asp-area="" asp-controller="Report" asp-action="Index">Reports</a>
+                        <li class="disabled" onclick="">
+                            <a>Reports</a>
                         </li>
                     </ul>
                 }
@@ -68,7 +68,7 @@
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+    <div class="container body-content body-container">
         @RenderBody()
         <hr />
         <footer>

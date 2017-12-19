@@ -25,7 +25,7 @@ namespace eventy.Controllers
         // GET: Event
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Events.ToListAsync());
+            return View(await _context.Events.OrderByDescending(e => e.Id).ToListAsync());
         }
 
         // GET: Event/Details/5
@@ -46,15 +46,30 @@ namespace eventy.Controllers
             var eventDetailsViewModel = new EventDetailsViewModel();
             eventDetailsViewModel.Event = @event;
 
-            var families = _context.EventsFamilies.Join(
+            //var families = _context.EventsFamilies.Join(
+            //    _context.Families,
+            //    eventFamily => eventFamily.Id,
+            //    family => family.Id,
+            //    (eventFamily, family) => new {
+            //        Family = family,
+            //        EventId = eventFamily.EventId
+            //    }
+            //).Where(eventFamily => eventFamily.EventId == @event.Id);
+
+            var eventFamilies = _context.EventsFamilies.Where(ef => ef.EventId == @event.Id);
+
+            eventDetailsViewModel.NumberOfFamiliesRegistered = eventFamilies.Count();
+
+            var families = eventFamilies.Join(
                 _context.Families,
-                eventFamily => eventFamily.Id,
+                eventFamily => eventFamily.FamilyId,
                 family => family.Id,
-                (eventFamily, family) => new {
+                (eventFamily, family) => new
+                {
                     Family = family,
                     EventId = eventFamily.EventId
                 }
-            ).Where(eventFamily => eventFamily.EventId == @event.Id);
+            );
 
             var familyMembersDetails = _context.FamilyMembers.Join(
                 families,
@@ -202,6 +217,89 @@ namespace eventy.Controllers
         private bool EventExists(long id)
         {
             return _context.Events.Any(e => e.Id == id);
+        }
+
+        /// <summary>
+        /// id is family id. 
+        /// TODO: Improve this!
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet, ActionName("Register")]
+        public async Task<IActionResult> Register(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var family = await _context.Families
+                .SingleOrDefaultAsync(f => f.Id == id);
+
+            if (family == null)
+            {
+                return NotFound();
+            }
+
+            var events = await _context.Events.OrderByDescending(e => e.Id).ToListAsync();
+
+            if (events.Count == 0)
+            {
+                return RedirectToAction("Create", "Event");
+            }
+
+            RegisterViewModel registerViewModel = new RegisterViewModel();
+            registerViewModel.Events = events.ConvertAll<SelectListItem>(e =>
+            {
+                return new SelectListItem()
+                {
+                    Text = e.EventName,
+                    Value = e.Id.ToString()
+                };
+            });
+            registerViewModel.Family = family;
+
+            return View(registerViewModel);
+        }
+
+        [HttpPost, ActionName("Register")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterConfirmed(RegisterViewModel registerViewModel)
+        {
+            var eventId = int.Parse(registerViewModel.EventId);
+            var familyId = int.Parse(registerViewModel.FamilyId);
+
+            var eventFamily = await _context.EventsFamilies.FirstOrDefaultAsync(ef =>
+                ef.FamilyId == familyId &&
+                ef.EventId == eventId
+            );
+            
+            if (eventFamily != null)
+            {
+                return View("AlreadyRegistered");
+            }
+
+            var eventFamilyCount = await _context.EventsFamilies
+                .Where(ef => ef.EventId == eventId)
+                .CountAsync();
+
+            var @event = await _context.Events
+                .Where(e => e.Id == eventId)
+                .FirstOrDefaultAsync();
+
+            if (@event.MaxNumberOfFamilies <= eventFamilyCount)
+            {
+                return View("EventFull");
+            }
+
+            EventsFamilies eventsFamilies = new EventsFamilies();
+            eventsFamilies.EventId = @event.Id;
+            eventsFamilies.FamilyId = familyId;
+
+            _context.EventsFamilies.Add(eventsFamilies);
+            await _context.SaveChangesAsync();
+
+            return View("RegistrationSuccess");
         }
     }
 }

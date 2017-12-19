@@ -1,0 +1,47 @@
+@model eventy.Models.EventViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register to Event";
+}
+
+
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <h3>Register Family To Event</h3>
+        <hr />
+        <form asp-controller="Event" asp-action="Register" class="form-horizontal" method="post">
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label class="control-label">Event </label>
+                </div>
+                <div class="col-md-6">
+                    <select asp-for="EventId" asp-items="Model.Events" class="form-control"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label class="control-label">Family ID</label>
+                </div>
+                <div class="col-md-2 col-md-offset-0">
+                    <input type="text" asp-for="FamilyId" readonly class="form-control" value="@Model.Family.Id" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label class="control-label">Family Name</label>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" readonly class="form-control" value="@Model.Family.Name" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label class="control-label"> </label>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-primary" type="submit">Register </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
