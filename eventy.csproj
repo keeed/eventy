@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-eventy-79264C5A-69F5-4FA3-8FDD-26621511875C</UserSecretsId>
-    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64,win-x86,osx-x64</RuntimeIdentifiers>
   </PropertyGroup>
   
   <!-- <Target Name="DevelopmentCopy" Condition="'$(Configuration)' == 'Debug'" AfterTargets="Build">
