@@ -99,6 +99,9 @@ namespace eventy.Controllers
                 }
             });
 
+            eventDetailsViewModel.FamilyMembersDetails = 
+                eventDetailsViewModel.FamilyMembersDetails.OrderBy(k => k.Family.Id).ToList();
+
             return View(eventDetailsViewModel);
         }
 
