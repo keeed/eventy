@@ -88,16 +88,24 @@ namespace eventy.Controllers
                 .Where(efm => efm.EventId == @event.Id)
                 .ToListAsync();
             
+            var maxNumberOfAttendees = 0;
+            var totalNumberOfAttendees = 0;
+
             eventDetailsViewModel.FamilyMembersDetails.ForEach(fmd => {
+                totalNumberOfAttendees++;
                 if (eventFamilyMembers.Any(efm => efm.FamilyMemberId == fmd.FamilyMember.Id))
                 {
                     fmd.IsAttending = true;
+                    maxNumberOfAttendees++;
                 }
                 else
                 {
                     fmd.IsAttending = false;
                 }
             });
+
+            eventDetailsViewModel.MaxNumberOfAttendees = maxNumberOfAttendees;
+            eventDetailsViewModel.TotalNumberOfAttendees = totalNumberOfAttendees;
 
             eventDetailsViewModel.FamilyMembersDetails = 
                 eventDetailsViewModel.FamilyMembersDetails.OrderBy(k => k.Family.Id).ToList();

@@ -9,6 +9,8 @@ namespace eventy.Models.EventViewModels
     {
         public Event Event { get; set; }
         public int NumberOfFamiliesRegistered { get; set; }
+        public int MaxNumberOfAttendees { get; set; }
+        public int TotalNumberOfAttendees { get; set; }
         public List<FamilyMemberDetails> FamilyMembersDetails { get; set; }
     }
 
