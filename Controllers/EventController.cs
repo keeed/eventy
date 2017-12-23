@@ -91,18 +91,49 @@ namespace eventy.Controllers
             var maxNumberOfAttendees = 0;
             var totalNumberOfAttendees = 0;
 
+            var maxNumberOfSeniorCitizens = 0;
+            var numberOfSeniorCitizensAttending = 0;
+
+            var maxNumberOfKids = 0;
+            var numberOfKidsAttending = 0;
+
             eventDetailsViewModel.FamilyMembersDetails.ForEach(fmd => {
+
+                if (DateTime.Now.Year - fmd.FamilyMember.Birthday.Year >= 60)
+                {
+                    maxNumberOfSeniorCitizens++;
+                }
+                else if (DateTime.Now.Year - fmd.FamilyMember.Birthday.Year <= 12)
+                {
+                    maxNumberOfKids++;
+                }
+
                 totalNumberOfAttendees++;
                 if (eventFamilyMembers.Any(efm => efm.FamilyMemberId == fmd.FamilyMember.Id))
                 {
                     fmd.IsAttending = true;
                     maxNumberOfAttendees++;
+
+                    if (DateTime.Now.Year - fmd.FamilyMember.Birthday.Year >= 60)
+                    {
+                        numberOfSeniorCitizensAttending++;
+                    }
+                    else if (DateTime.Now.Year - fmd.FamilyMember.Birthday.Year <= 12)
+                    {
+                        numberOfKidsAttending++;
+                    }
                 }
                 else
                 {
                     fmd.IsAttending = false;
                 }
             });
+
+            eventDetailsViewModel.MaxNumberOfKids = maxNumberOfKids;
+            eventDetailsViewModel.NumberOfKidsAttending = numberOfKidsAttending;
+
+            eventDetailsViewModel.MaxNumberOfSeniorCitizens = maxNumberOfSeniorCitizens;
+            eventDetailsViewModel.NumberOfSeniorCitizensAttending = numberOfSeniorCitizensAttending;
 
             eventDetailsViewModel.MaxNumberOfAttendees = maxNumberOfAttendees;
             eventDetailsViewModel.TotalNumberOfAttendees = totalNumberOfAttendees;

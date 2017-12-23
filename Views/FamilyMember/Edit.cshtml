@@ -6,7 +6,7 @@
 
 <h2>Edit</h2>
 
-<h4>FamilyMember</h4>
+<h4>@Html.DisplayFor(model => model.FullName)</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,7 +14,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="FamilyId" class="control-label">Family Id</label>
+                <label asp-for="FamilyId" class="control-label">Family Id (specify the Family Id to add to a Family)</label>
                 <input asp-for="FamilyId" class="form-control" />
                 <span asp-validation-for="FamilyId" class="text-danger"></span>
             </div>

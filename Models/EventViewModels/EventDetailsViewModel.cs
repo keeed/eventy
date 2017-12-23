@@ -12,6 +12,11 @@ namespace eventy.Models.EventViewModels
         public int MaxNumberOfAttendees { get; set; }
         public int TotalNumberOfAttendees { get; set; }
         public List<FamilyMemberDetails> FamilyMembersDetails { get; set; }
+
+        public long NumberOfSeniorCitizensAttending { get; set; }
+        public long MaxNumberOfSeniorCitizens { get; set; }
+        public long NumberOfKidsAttending { get; set; }
+        public long MaxNumberOfKids{ get; set; }
     }
 
     public class FamilyMemberDetails

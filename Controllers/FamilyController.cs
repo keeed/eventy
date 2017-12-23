@@ -49,6 +49,8 @@ namespace eventy.Controllers
             var families = from f in _context.Families 
                            select f;
 
+            families = families.OrderBy(f => f.Id);
+
             if (!string.IsNullOrEmpty(searchString))
             {
                 families = families.Where( f =>
@@ -92,6 +94,8 @@ namespace eventy.Controllers
                 return NotFound();
             }
 
+            var familyDetailsViewModel = new FamilyDetailsViewModel();
+
             var family = await _context.Families
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (family == null)
@@ -99,7 +103,15 @@ namespace eventy.Controllers
                 return NotFound();
             }
 
-            return View(family);
+            familyDetailsViewModel.Family = family;
+
+            var familyMembers = await _context.FamilyMembers
+                .Where(fm => fm.FamilyId == family.Id)
+                .ToListAsync();
+
+            familyDetailsViewModel.FamilyMembers = familyMembers;
+
+            return View(familyDetailsViewModel);
         }
 
         // GET: Family/Create
@@ -210,9 +222,30 @@ namespace eventy.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> RemoveFamilyMember(int familyId, int familyMemberId)
+        {
+            var familyMemberEntry = _context.FamilyMembers
+                .Where(fm => fm.Id == familyMemberId && fm.FamilyId == familyId).FirstOrDefault();   
+
+            if (familyMemberEntry == null)
+            {
+                return RedirectToAction("Details", new { id = familyId });
+            }
+
+            familyMemberEntry.FamilyId = 0;
+
+            _context.FamilyMembers.Update(familyMemberEntry);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = familyId });
+        }
+
         private bool FamilyExists(long id)
         {
             return _context.Families.Any(e => e.Id == id);
         }
+
+
     }
 }

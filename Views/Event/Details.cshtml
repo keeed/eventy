@@ -4,13 +4,13 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<h2>Event Details</h2>
 
 <div>
     <h4>@Html.DisplayFor(model => model.Event.EventName)</h4>
     <div>
-        <a asp-action="Edit" asp-route-id="@Model.Event.Id">Edit</a> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Edit" asp-route-id="@Model.Event.Id" class="btn btn-info">Edit</a>
+        <a asp-action="Index" class="btn btn-default">Back to List</a>
     </div>
     <hr />
     <dl class="dl-horizontal">
@@ -26,6 +26,18 @@
         <dd>
             @Model.MaxNumberOfAttendees / @Model.TotalNumberOfAttendees
         </dd>
+        <dt>
+            Senior Citizen
+        </dt>
+        <dd>
+            @Model.NumberOfSeniorCitizensAttending / @Model.MaxNumberOfSeniorCitizens
+        </dd>
+        <dt>
+            Kids
+        </dt>
+        <dd>
+            @Model.NumberOfKidsAttending / @Model.MaxNumberOfKids
+        </dd>
         <hr />
         <dt>
             Event Name
@@ -38,7 +50,7 @@
         </dt>
         <dd>
             @{
-                DateTime localEventDate = Model.Event.EventDate.ToLocalTime();
+            DateTime localEventDate = Model.Event.EventDate.ToLocalTime();
             }
             @Html.DisplayFor(model => localEventDate)
         </dd>
@@ -54,7 +66,7 @@
         </dt>
         <dd>
             @{
-                DateTime dateModifiedLocal = Model.Event.DateModified.Value.ToLocalTime();
+            DateTime dateModifiedLocal = Model.Event.DateModified.Value.ToLocalTime();
             }
             @Html.DisplayFor(model => dateModifiedLocal)
         </dd>
@@ -69,7 +81,7 @@
         </dt>
         <dd>
             @{
-                DateTime dateCreated = Model.Event.DateCreated.Value.ToLocalTime();
+            DateTime dateCreated = Model.Event.DateCreated.Value.ToLocalTime();
             }
             @Html.DisplayFor(model => dateCreated)
         </dd>
