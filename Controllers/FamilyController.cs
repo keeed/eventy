@@ -173,8 +173,12 @@ namespace eventy.Controllers
             {
                 try
                 {
-                    family = _context.Families.Find(family.Id);
-                    _context.Update(family);
+                    var familyToUpdate = _context.Families.Find(family.Id);
+
+                    familyToUpdate.Name = family.Name;
+                    familyToUpdate.Address = family.Address;
+
+                    _context.Update(familyToUpdate);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
